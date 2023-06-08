@@ -53,7 +53,8 @@ def main(checkpoint):
     # job
     try:
         jobs_data = util.read_log('jobs.log', checkpoint)
-        jobs_df = util.create_jobs(jobs_data)
+        jobs_acls = util.read_log('acl_jobs.log', checkpoint)
+        jobs_df = util.create_jobs(jobs_data, jobs_acls)
         util.save_to_csv(jobs_df, "jobs.csv")
     except:
         print("Error while trying to read jobs. Skipping...")
