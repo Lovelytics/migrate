@@ -129,6 +129,7 @@ def create_clusters(data):
     cluster_name = []
     creator_user_name = []
     policy_id = []
+    instance_profile = []
 
     for d in data:
         try:
@@ -140,16 +141,22 @@ def create_clusters(data):
                 policy_id.append(d['policy_id'])
             else:
                 policy_id.append(" ")
+            try:
+                instance_profile.append(d['aws_attributes']['instance_profile_arn'])
+            except:
+                instance_profile.append('')
         except Exception as e:
             print("Error in creating clusters...")
 
-    return {'cluster_id': cluster_id, 'cluster_name': cluster_name, 'creator_user_name': creator_user_name, 'policy_id': policy_id}
+    return {'cluster_id': cluster_id, 'cluster_name': cluster_name, 'creator_user_name': creator_user_name, 'policy_id': policy_id, 'instance_profile': instance_profile}
 
-def create_jobs(data):
+def create_jobs(data, jobs_acls):
     job_ids = []
     job_names = []
     job_types = []
+    job_creators = []
     job_owners = []
+    instance_profile = []
 
     for d in data:
         try:
@@ -162,12 +169,27 @@ def create_jobs(data):
             except:
                 job_types.append('N/A')
             try:
-                job_owners.append(d['creator_user_name'])
+                job_creators.append(d['creator_user_name'])
             except:
-                job_owners.append('N/A')
+                job_creators.append('N/A')
+            try:
+                instance_profile.append(d['settings']['new_cluster']['aws_attributes']['instance_profile_arn'])
+            except:
+                instance_profile.append('')
         except Exception as e:
             print("Error in creating jobs...")
-    return {'job_ids': job_ids, 'job_names': job_names, 'job_type':job_types, 'job_creator':job_owners }
+
+    for a in jobs_acls:
+        try:
+            a = json.loads(a)
+            for j in a['access_control_list']:
+                if j.get('user_name', None) != None:
+                    if j['all_permissions'][0]['permission_level'] == 'IS_OWNER':
+                        job_owners.append(j['user_name'])
+        except:
+            job_owners.append('')
+
+    return {'job_ids': job_ids, 'job_names': job_names, 'job_type':job_types, 'job_creator':job_creators, 'job_owner': job_owners, 'instance_profile': instance_profile}
 
 
 def create_shared_logs(checkpoint = "", directory_name = "artifacts/Shared"):
