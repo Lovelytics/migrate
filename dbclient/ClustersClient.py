@@ -309,6 +309,8 @@ class ClustersClient(dbclient):
                     if 'cluster_id' in cluster_conf:
                         checkpoint_cluster_configs_set.write(cluster_conf['cluster_id'])
                 else:
+                    cluster_resp['old_cluster_id'] = cluster_conf['cluster_id']
+                    cluster_resp['old_cluster_name'] = cluster_conf['cluster_name']
                     logging_utils.log_response_error(error_logger, cluster_resp)
                     print(cluster_resp)
 
