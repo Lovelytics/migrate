@@ -75,6 +75,7 @@ class MetastoreUpdater:
                         location = db_details_dict[db] + "/" + table
                     else:
                         print(f"ERROR: Database {db} not found in database details log")
+                        continue
 
                 new_ddl = ddl + "\nLOCATION '" + location + "'"
 
