@@ -5,7 +5,7 @@ The resulting .xlsx file can be imported into a Google Sheet
 '''
 
 import os, csv, openpyxl
-
+csv.field_size_limit(10000000)  # Allows up to 10 million characters in a field
 
 def csv_to_excel(input_folder):
     
